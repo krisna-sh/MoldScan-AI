@@ -27,7 +27,8 @@ if sys.platform == 'win32':
 app = Flask(__name__)
 
 # ── CONFIG ────────────────────────────────────────────────────────────
-MODEL_PATH  = r"C:\Users\DELL\Downloads\ResNet50V2_BiLSTM_FINAL\ResNet50V2_BiLSTM_FINAL.h5"
+BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH  = os.path.join(BASE_DIR, "ResNet50V2_BiLSTM_FINAL.h5")
 IMG_SIZE    = (224, 224)
 CLASS_NAMES = ['Stachybotrys', 'aspergillus', 'cladosporium', 'penicillium']
 
@@ -1277,9 +1278,14 @@ def predict():
 # MAIN
 # ══════════════════════════════════════════════════════════════════════
 if __name__ == '__main__':
+    # Hugging Face Spaces run on port 7860 by default. 
+    # host='0.0.0.0' is required for Docker containers to be accessible externally.
+    port = int(os.environ.get("PORT", 7860))
+    
     print("\n" + "="*55)
     print("  MoldScan AI  --  Starting server...")
     print("  Model  :", MODEL_PATH)
-    print("  Open   : http://localhost:5000")
+    print(f"  Open   : http://0.0.0.0:{port}")
     print("="*55 + "\n")
-    app.run(debug=True, port=5000)
+    
+    app.run(host='0.0.0.0', port=port, debug=False)
